@@ -1,20 +1,28 @@
-// script.js
-import { generateReply } from "./AI/brain.js";
+import { generateReply, updateSettings } from "./AI/brain.js";
 
 const chat = document.getElementById("chat");
 const inputBox = document.getElementById("inputBox");
 const sendBtn = document.getElementById("sendBtn");
 
+// Settings elements
+const langSelect = document.getElementById("langSelect");
+const personalitySelect = document.getElementById("personalitySelect");
+const customBehavior = document.getElementById("customBehavior");
+const saveSettings = document.getElementById("saveSettings");
+
+saveSettings.addEventListener("click", () => {
+    updateSettings({
+        language: langSelect.value,
+        personality: personalitySelect.value,
+        customBehavior: customBehavior.value
+    });
+
+    addMessage("Settings updated.", "ai");
+});
+
 function addMessage(text, sender) {
     const div = document.createElement("div");
-    div.classList.add("message");
-
-    if (sender === "user") {
-        div.classList.add("user");
-    } else {
-        div.classList.add("ai");
-    }
-
+    div.classList.add("message", sender === "user" ? "user" : "ai");
     div.textContent = text;
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
@@ -24,14 +32,11 @@ function handleSend() {
     const text = inputBox.value.trim();
     if (!text) return;
 
-    // Show user message
     addMessage(text, "user");
     inputBox.value = "";
 
-    // Generate AI reply using your custom logic
     const reply = generateReply(text);
 
-    // Simulate a tiny delay for effect
     setTimeout(() => {
         addMessage(reply, "ai");
     }, 150);
@@ -45,7 +50,3 @@ inputBox.addEventListener("keydown", (e) => {
         handleSend();
     }
 });
-
-// Optional: initial welcome message
-addMessage("Yo, I'm your custom Roblox HTTP AI running fully in your browser.", "ai");
-addMessage("Ask me about Roblox, HttpService, GitHub, or edit AI/brain.js to change my brain.", "ai");
