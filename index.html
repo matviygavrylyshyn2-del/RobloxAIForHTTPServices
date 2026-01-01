@@ -1,23 +1,48 @@
-<div id="settings">
-    <h2>Settings</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Roblox HTTP AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <label>Language:</label>
-    <select id="langSelect">
-        <option value="en">English</option>
-        <option value="fr">French</option>
-        <option value="ua">Ukrainian</option>
-    </select>
+    <div id="app">
+        <h1>Roblox HTTP AI</h1>
 
-    <label>Personality:</label>
-    <select id="personalitySelect">
-        <option value="neutral">Neutral</option>
-        <option value="friendly">Friendly</option>
-        <option value="aggressive">Aggressive</option>
-        <option value="robotic">Robotic</option>
-    </select>
+        <div id="chat"></div>
 
-    <label>Custom AI Behavior:</label>
-    <textarea id="customBehavior" placeholder="Describe how the AI should behave..."></textarea>
+        <div id="inputBar">
+            <input id="inputBox" type="text" placeholder="Type a message..." autocomplete="off">
+            <button id="sendBtn">Send</button>
+        </div>
 
-    <button id="saveSettings">Save Settings</button>
-</div>
+        <div id="settings">
+            <h2>Settings</h2>
+
+            <label for="langSelect">Language:</label>
+            <select id="langSelect">
+                <option value="en">English</option>
+                <option value="fr">French</option>
+                <option value="ua">Ukrainian</option>
+            </select>
+
+            <label for="personalitySelect">Personality:</label>
+            <select id="personalitySelect">
+                <option value="neutral">Neutral</option>
+                <option value="friendly">Friendly</option>
+                <option value="aggressive">Aggressive</option>
+                <option value="robotic">Robotic</option>
+            </select>
+
+            <label for="customBehavior">Custom AI behavior:</label>
+            <textarea id="customBehavior" placeholder="Describe how the AI should behave..."></textarea>
+
+            <button id="saveSettings">Save settings</button>
+        </div>
+    </div>
+
+    <!-- IMPORTANT: module so imports work -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
