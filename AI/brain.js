@@ -1,16 +1,16 @@
 // AI/brain.js
 
-// Memory of conversation
+// Conversation memory
 let memory = [];
 
-// Settings (default values)
+// Settings with defaults
 let settings = {
     language: "en",
     personality: "neutral",
     customBehavior: ""
 };
 
-// Simple translation dictionary
+// Simple language dictionary
 const translations = {
     en: {
         fallback: "I'm not sure yet, but I'm learning.",
@@ -18,7 +18,7 @@ const translations = {
     },
     fr: {
         fallback: "Je ne suis pas encore sûr, mais j'apprends.",
-        greeting: "Bonjour! Comment puis-je vous aider?",
+        greeting: "Bonjour ! Comment puis-je vous aider ?",
     },
     ua: {
         fallback: "Я ще не впевнений, але я навчаюся.",
@@ -29,59 +29,38 @@ const translations = {
 // Personalities
 const personalities = {
     neutral: (text) => text,
-    friendly: (text) => "😊 " + text,
-    aggressive: (text) => "⚠️ " + text.toUpperCase(),
-    robotic: (text) => "[SYSTEM OUTPUT]: " + text
+    friendly: (text) => "Friendly mode: " + text,
+    aggressive: (text) => "AGGRESSIVE MODE: " + text.toUpperCase(),
+    robotic: (text) => "[ROBOTIC OUTPUT] " + text
 };
 
-// Update settings from UI
+// Called from UI to update settings
 export function updateSettings(newSettings) {
     settings = { ...settings, ...newSettings };
 }
 
-// Add message to memory
+// Add entry to memory
 function remember(role, text) {
     memory.push({ role, text });
-    if (memory.length > 20) memory.shift(); // limit memory size
+    if (memory.length > 20) {
+        memory.shift();
+    }
 }
 
-// Main AI function
-export function generateReply(message) {
-    remember("user", message);
+// Simple similarity check
+function similarity(a, b) {
+    const wordsA = a.split(/\s+/);
+    const wordsB = b.split(/\s+/);
+    let matches = 0;
 
-    const lang = translations[settings.language] || translations.en;
-
-    // Basic understanding
-    const msg = message.toLowerCase();
-
-    if (msg.includes("hello") || msg.includes("hi")) {
-        return applyPersonality(lang.greeting);
+    for (const w of wordsA) {
+        if (wordsB.includes(w)) matches++;
     }
 
-    if (msg.includes("roblox")) {
-        return applyPersonality("Roblox detected. Do you want help with scripting, HttpService, or something else?");
-    }
-
-    if (msg.includes("httpservice")) {
-        return applyPersonality("HttpService allows Roblox to communicate with this website using JSON.");
-    }
-
-    // Custom behavior injection
-    if (settings.customBehavior.trim() !== "") {
-        return applyPersonality(settings.customBehavior);
-    }
-
-    // Memory-based fallback
-    const lastUser = memory[memory.length - 2]?.text || "";
-    if (lastUser && similarity(msg, lastUser) > 0.5) {
-        return applyPersonality("You already said something similar earlier.");
-    }
-
-    // Default fallback
-    return applyPersonality(lang.fallback);
+    return matches / Math.max(wordsA.length, wordsB.length);
 }
 
-// Apply personality
+// Apply personality wrapper
 function applyPersonality(text) {
     const style = personalities[settings.personality] || personalities.neutral;
     const output = style(text);
@@ -89,15 +68,51 @@ function applyPersonality(text) {
     return output;
 }
 
-// Very simple similarity check
-function similarity(a, b) {
-    const wordsA = a.split(" ");
-    const wordsB = b.split(" ");
-    let matches = 0;
+// Main AI function
+export function generateReply(message) {
+    remember("user", message);
 
-    for (let w of wordsA) {
-        if (wordsB.includes(w)) matches++;
+    const lang = translations[settings.language] || translations.en;
+    const msg = message.toLowerCase().trim();
+
+    // Greetings
+    if (msg.includes("hello") || msg.includes("hi") || msg.includes("hey")) {
+        return applyPersonality(lang.greeting);
     }
 
-    return matches / Math.max(wordsA.length, wordsB.length);
+    // Roblox / HTTP
+    if (msg.includes("httpservice")) {
+        return applyPersonality("HttpService lets Roblox send HTTP requests to websites like this one using JSON.");
+    }
+
+    if (msg.includes("roblox")) {
+        return applyPersonality("Roblox detected. Are you asking about scripting, HttpService, or game design?");
+    }
+
+    // GitHub
+    if (msg.includes("github")) {
+        return applyPersonality("This site runs on GitHub Pages. Update the code in the repo to change my brain.");
+    }
+
+    // Help
+    if (msg.includes("help")) {
+        return applyPersonality("I can talk about Roblox, HttpService, GitHub, and whatever you teach me in AI/brain.js.");
+    }
+
+    // If user defined custom behavior, follow it
+    if (settings.customBehavior.trim() !== "") {
+        return applyPersonality(settings.customBehavior);
+    }
+
+    // Memory-based reaction
+    const previousUser = memory
+        .filter(m => m.role === "user")
+        .slice(-2, -1)[0];
+
+    if (previousUser && similarity(msg, previousUser.text.toLowerCase()) > 0.5) {
+        return applyPersonality("You already asked something very similar earlier.");
+    }
+
+    // Default fallback
+    return applyPersonality(lang.fallback);
 }
