@@ -1,0 +1,40 @@
+body {
+    background: #111;
+    color: white;
+    font-family: Arial;
+    text-align: center;
+    padding-top: 40px;
+}
+
+#chat {
+    width: 400px;
+    height: 400px;
+    margin: auto;
+    background: #222;
+    padding: 10px;
+    overflow-y: auto;
+    border-radius: 8px;
+}
+
+#input {
+    width: 400px;
+    margin: 20px auto;
+    display: flex;
+}
+
+#inputBox {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+#sendBtn {
+    padding: 10px 20px;
+    margin-left: 10px;
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
