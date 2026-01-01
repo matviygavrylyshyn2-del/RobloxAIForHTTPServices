@@ -1,25 +1,52 @@
+// script.js
 import { generateReply, updateSettings } from "./AI/brain.js";
 
 const chat = document.getElementById("chat");
 const inputBox = document.getElementById("inputBox");
 const sendBtn = document.getElementById("sendBtn");
 
-// Settings elements
+// settings UI
 const langSelect = document.getElementById("langSelect");
 const personalitySelect = document.getElementById("personalitySelect");
 const customBehavior = document.getElementById("customBehavior");
 const saveSettings = document.getElementById("saveSettings");
 
+// load settings from localStorage if present
+function loadSettings() {
+    const saved = localStorage.getItem("robloxHttpAISettings");
+    if (!saved) return;
+
+    try {
+        const parsed = JSON.parse(saved);
+        if (parsed.language) langSelect.value = parsed.language;
+        if (parsed.personality) personalitySelect.value = parsed.personality;
+        if (parsed.customBehavior) customBehavior.value = parsed.customBehavior;
+
+        updateSettings(parsed);
+    } catch (e) {
+        console.warn("Failed to load saved settings:", e);
+    }
+}
+
+function saveSettingsLocal(newSettings) {
+    localStorage.setItem("robloxHttpAISettings", JSON.stringify(newSettings));
+}
+
+// settings button
 saveSettings.addEventListener("click", () => {
-    updateSettings({
+    const newSettings = {
         language: langSelect.value,
         personality: personalitySelect.value,
         customBehavior: customBehavior.value
-    });
+    };
+
+    updateSettings(newSettings);
+    saveSettingsLocal(newSettings);
 
     addMessage("Settings updated.", "ai");
 });
 
+// chat helpers
 function addMessage(text, sender) {
     const div = document.createElement("div");
     div.classList.add("message", sender === "user" ? "user" : "ai");
@@ -39,7 +66,7 @@ function handleSend() {
 
     setTimeout(() => {
         addMessage(reply, "ai");
-    }, 150);
+    }, 120);
 }
 
 sendBtn.addEventListener("click", handleSend);
@@ -50,3 +77,8 @@ inputBox.addEventListener("keydown", (e) => {
         handleSend();
     }
 });
+
+// init
+loadSettings();
+addMessage("Custom browser AI online. Configure my language, personality, and behavior in the settings below.", "ai");
+addMessage("You can also edit AI/brain.js in the repo to hard‑code new behaviors.", "ai");
