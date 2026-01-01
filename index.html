@@ -1,20 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My AI Website</title>
+    <meta charset="UTF-8">
+    <title>Roblox HTTP AI</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>AI Chat</h1>
+    <div id="app">
+        <h1>Roblox HTTP AI</h1>
 
-<div id="chat"></div>
+        <div id="chat"></div>
 
-<div id="input">
-    <input id="inputBox" placeholder="Type a message...">
-    <button id="sendBtn">Send</button>
-</div>
+        <div id="inputBar">
+            <input id="inputBox" type="text" placeholder="Type a message..." autocomplete="off">
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
 
-<script src="script.js"></script>
+    <!-- IMPORTANT: type="module" so we can import from AI/brain.js -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
