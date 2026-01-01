@@ -1,32 +1,51 @@
+// script.js
+import { generateReply } from "./AI/brain.js";
+
 const chat = document.getElementById("chat");
 const inputBox = document.getElementById("inputBox");
 const sendBtn = document.getElementById("sendBtn");
 
 function addMessage(text, sender) {
     const div = document.createElement("div");
-    div.textContent = sender + ": " + text;
+    div.classList.add("message");
+
+    if (sender === "user") {
+        div.classList.add("user");
+    } else {
+        div.classList.add("ai");
+    }
+
+    div.textContent = text;
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
 }
 
-async function sendMessage() {
-    const text = inputBox.value;
+function handleSend() {
+    const text = inputBox.value.trim();
     if (!text) return;
 
-    addMessage(text, "You");
+    // Show user message
+    addMessage(text, "user");
     inputBox.value = "";
 
-    const response = await fetch("https://YOUR-SERVER.com/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
-    });
+    // Generate AI reply using your custom logic
+    const reply = generateReply(text);
 
-    const data = await response.json();
-    addMessage(data.reply, "AI");
+    // Simulate a tiny delay for effect
+    setTimeout(() => {
+        addMessage(reply, "ai");
+    }, 150);
 }
 
-sendBtn.onclick = sendMessage;
-inputBox.onkeydown = (e) => {
-    if (e.key === "Enter") sendMessage();
-};
+sendBtn.addEventListener("click", handleSend);
+
+inputBox.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        handleSend();
+    }
+});
+
+// Optional: initial welcome message
+addMessage("Yo, I'm your custom Roblox HTTP AI running fully in your browser.", "ai");
+addMessage("Ask me about Roblox, HttpService, GitHub, or edit AI/brain.js to change my brain.", "ai");
